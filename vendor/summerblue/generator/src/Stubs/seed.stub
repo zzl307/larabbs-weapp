@@ -1,0 +1,20 @@
+<?php
+
+use Illuminate\Database\Seeder;
+use App\Models\{{Model}};
+
+class {{Model}}sTableSeeder extends Seeder
+{
+    public function run()
+    {
+        ${{model}}s = factory({{Model}}::class)->times(50)->make()->each(function (${{model}}, $index) {
+            if ($index == 0) {
+                // ${{model}}->field = 'value';
+            }
+        });
+
+        {{Model}}::insert(${{model}}s->toArray());
+    }
+
+}
+

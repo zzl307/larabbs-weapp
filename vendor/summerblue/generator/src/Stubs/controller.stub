@@ -1,0 +1,60 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use {{namespace}}Models\{{Model}};
+use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\{{Model}}Request;
+
+class {{Models}}Controller extends Controller
+{
+    public function __construct()
+    {
+        $this->middleware('auth', ['except' => ['index', 'show']]);
+    }
+
+	public function index()
+	{
+		${{models}} = {{Model}}::paginate();
+		return view('{{models}}.index', compact('{{models}}'));
+	}
+
+    public function show({{Model}} ${{model}})
+    {
+        return view('{{models}}.show', compact('{{model}}'));
+    }
+
+	public function create({{Model}} ${{model}})
+	{
+		return view('{{models}}.create_and_edit', compact('{{model}}'));
+	}
+
+	public function store({{Model}}Request $request)
+	{
+		${{model}} = {{Model}}::create($request->all());
+		return redirect()->route('{{prefix}}{{models}}.show', ${{model}}->id)->with('message', 'Created successfully.');
+	}
+
+	public function edit({{Model}} ${{model}})
+	{
+        $this->authorize('update', ${{model}});
+		return view('{{models}}.create_and_edit', compact('{{model}}'));
+	}
+
+	public function update({{Model}}Request $request, {{Model}} ${{model}})
+	{
+		$this->authorize('update', ${{model}});
+		${{model}}->update($request->all());
+
+		return redirect()->route('{{prefix}}{{models}}.show', ${{model}}->id)->with('message', 'Updated successfully.');
+	}
+
+	public function destroy({{Model}} ${{model}})
+	{
+		$this->authorize('destroy', ${{model}});
+		${{model}}->delete();
+
+		return redirect()->route('{{prefix}}{{models}}.index')->with('message', 'Deleted successfully.');
+	}
+}

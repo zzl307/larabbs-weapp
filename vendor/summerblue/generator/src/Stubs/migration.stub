@@ -1,0 +1,17 @@
+<?php
+
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
+
+class {{ModelMigration}} extends Migration 
+{
+	public function up()
+	{
+		{{schema_up}}
+	}
+
+	public function down()
+	{
+		{{schema_down}}
+	}
+}

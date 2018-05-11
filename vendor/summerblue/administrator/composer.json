@@ -1,0 +1,48 @@
+{
+	"name": "summerblue/administrator",
+	"description": "A database interface package for Laravel, modified!",
+	"homepage": "https://github.com/summerblue/administrator",
+	"keywords": ["administrator", "admin", "database", "laravel-administrator", "laravel", "cms"],
+	"license": "MIT",
+	"authors": [
+		{
+			"name": "Original: Jan Hartigan, modified by CJ",
+			"email": "cj@estgroupe.com"
+		}
+	],
+	"support": {
+		"issues": "https://github.com/summerblue/administrator/issues"
+	},
+	"require": {
+		"php": ">=7.0.0",
+		"laravel/framework": "5.5.*",
+		"ckeditor/ckeditor": "4.*"
+	},
+	"require-dev": {
+		"mockery/mockery": "~0.9",
+		"phpunit/phpunit": "~5.7.12"
+	},
+	"autoload": {
+		"classmap": [
+			"src/controllers"
+		],
+		"psr-0": {
+			"Frozennode\\Administrator": "src/"
+		}
+	},
+	"scripts": {
+		"post-update-cmd": [
+			"if [ -d \"public/js/ckeditor/\" ] \nthen \nrm -R public/js/ckeditor/ \nfi ",
+			"if [ -d \"vendor/ckeditor/ckeditor/\" ] \nthen \nmv vendor/ckeditor/ckeditor/ public/js/  \nfi",
+			"if [ -d \"vendor/ckeditor/\" ] \nthen \nrm -R vendor/ckeditor/ \nfi"
+		]
+	},
+	"minimum-stability": "dev",
+	"extra": {
+		"laravel": {
+			"providers": [
+				"Frozennode\\Administrator\\AdministratorServiceProvider"
+			]
+		}
+	}
+}
