@@ -1,2 +1,0 @@
-
-Route::resource('{{models}}', '{{Models}}Controller', ['only' => ['index', 'show', 'create', 'store', 'update', 'edit', 'destroy']]);
