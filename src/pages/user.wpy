@@ -1,7 +1,8 @@
 <template>
   <view class="page">
     <view wx:if="{{ loggedIn }}">
-      已登录
+      已登录 name:{{ userInfo.name }}
+      <button type="warn" @tap="logout">退出登录</button>
     </view>
     <view wx:else>
       <navigator class="weui-cell weui-cell_access" url="/pages/auth/login">
@@ -14,17 +15,50 @@
 
 <script>
   import wepy from 'wepy'
+  import api from '@/utils/api'
 
   export default class User extends wepy.page {
     config = {
       navigationBarTitleText: '我的'
     }
     data = {
-      loggedIn: false
+      // 标记是否登录
+      loggedIn: false,
+      // 用户信息
+      userInfo: null
     }
-    onShow() {
-      if (wepy.getStorageSync('access_token')) {
+    async onShow() {
+      // 获取缓存中的 access_token
+      let accessToken = wepy.getStorageSync('access_token')
+
+      // Token 存在则说明已登录
+      if (accessToken) {
+        // 测试 authRequest 接口
+        let userResponse = await api.authRequest('user')
+        this.userInfo = userResponse.data
         this.loggedIn = true
+        this.$apply()
+      }
+    }
+    methods = {
+      // 退出
+      async logout (e) {
+        try {
+          let logoutResponse = await api.logout()
+
+          // 退出成功清除信息
+          if (logoutResponse.statusCode === 204) {
+            this.loggedIn = false
+            this.userInfo = null
+            this.$apply()
+          }
+        } catch (err) {
+          console.log(err)
+          wepy.showModal({
+            title: '提示',
+            content: '服务器错误，请联系管理员'
+          })
+        }
       }
     }
   }
