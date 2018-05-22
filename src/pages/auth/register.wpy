@@ -189,7 +189,7 @@
           // 跳转到我的页面
           setTimeout(function() {
             wepy.switchTab({
-              url: '/pages/user'
+              url: '/pages/users/me'
             })
           }, 2000)
         }

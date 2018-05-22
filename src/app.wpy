@@ -40,7 +40,8 @@ export default class extends wepy.app {
   config = {
     pages: [
       'pages/index',
-      'pages/user',
+      'pages/users/me',
+      'pages/users/edit',
       'pages/auth/login',
       'pages/auth/register'
     ],
@@ -57,7 +58,7 @@ export default class extends wepy.app {
         iconPath: 'images/index.png',
         selectedIconPath: 'images/index_selected.png'
       }, {
-        pagePath: 'pages/user',
+        pagePath: 'pages/users/me',
         text: '我的',
         iconPath: 'images/user.png',
         selectedIconPath: 'images/user_selected.png'
