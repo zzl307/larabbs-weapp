@@ -38,7 +38,7 @@
               <view class="weui-media-box__info topic-info">
                 <view class="weui-media-box__info__meta">{{ topic.category.name }} • </view>
                 <view class="weui-media-box__info__meta">{{ topic.user.name }} • </view>
-                <view class="weui-media-box__info__meta">{{ topic.updated_at }}</view>
+                <view class="weui-media-box__info__meta">{{ topic.updated_at_diff }}</view>
               </view>
             </view>
             <view class="weui-badge reply-count">{{ topic.reply_count }}</view>
@@ -55,6 +55,7 @@
 <script>
   import wepy from 'wepy'
   import api from '@/utils/api'
+  import util from '@/utils/util'
 
   export default class TopicIndex extends wepy.page {
     config = {
@@ -79,6 +80,9 @@
           }
         })
         let topics = topicsResponse.data.data
+        topics.forEach(function (topic) {
+          topic.updated_at_diff = util.diffForHumans(topic.updated_at)
+        })
         // 如果传入参数 reset 为true，则覆盖 topics
         this.topics = reset ? topics : this.topics.concat(topics)
         let pagination = topicsResponse.data.meta.pagination
