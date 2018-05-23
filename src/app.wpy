@@ -39,7 +39,7 @@ import api from '@/utils/api'
 export default class extends wepy.app {
   config = {
     pages: [
-      'pages/index',
+      'pages/topics/index',
       'pages/users/me',
       'pages/users/edit',
       'pages/auth/login',
@@ -53,7 +53,7 @@ export default class extends wepy.app {
     },
     tabBar: {
       list: [{
-        pagePath: 'pages/index',
+        pagePath: 'pages/topics/index',
         text: '首页',
         iconPath: 'images/index.png',
         selectedIconPath: 'images/index_selected.png'

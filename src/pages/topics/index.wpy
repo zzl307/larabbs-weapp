@@ -1,0 +1,116 @@
+<style lang="less">
+  .weui-media-box__info__meta {
+    margin: 0;
+    font-size: 12px;
+  }
+  .topic-info {
+    margin-top: 5px;
+  }
+  .topic-title {
+    white-space: normal;
+    font-size: 14px;
+  }
+  .avatar {
+    padding: 4px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    width: 50px;
+    height: 50px;
+  }
+  .reply-count {
+    background-color: #d8d8d8;
+    float: right;
+  }
+</style>
+<template>
+<view class="page">
+  <view class="page__bd">
+    <view class="weui-panel weui-panel_access">
+      <view class="weui-panel__bd">
+        <repeat for="{{ topics }}" key="id" index="index" item="topic">
+          <navigator url="" class="weui-media-box weui-media-box_appmsg" hover-class="weui-cell_active">
+            <view class="weui-media-box__hd weui-media-box__hd_in-appmsg">
+              <image class="weui-media-box__thumb avatar" src="{{ topic.user.avatar }}" />
+            </view>
+            <view class="weui-media-box__bd weui-media-box__bd_in-appmsg">
+              <view class="weui-media-box__title topic-title">{{ topic.title }}</view>
+
+              <view class="weui-media-box__info topic-info">
+                <view class="weui-media-box__info__meta">{{ topic.category.name }} • </view>
+                <view class="weui-media-box__info__meta">{{ topic.user.name }} • </view>
+                <view class="weui-media-box__info__meta">{{ topic.updated_at }}</view>
+              </view>
+            </view>
+            <view class="weui-badge reply-count">{{ topic.reply_count }}</view>
+          </navigator>
+        </repeat>
+        <view class="weui-loadmore weui-loadmore_line" wx:if="{{ noMoreData }}">
+          <view class="weui-loadmore__tips weui-loadmore__tips_in-line">没有更多数据</view>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>
+</template>
+<script>
+  import wepy from 'wepy'
+  import api from '@/utils/api'
+
+  export default class TopicIndex extends wepy.page {
+    config = {
+      enablePullDownRefresh: true
+    }
+    data = {
+      // 话题数据
+      topics: [],
+      // 当前分页
+      page: 1,
+      noMoreData: false
+    }
+    // 获取话题数据
+    async getTopics(page = 1, reset = false) {
+      try {
+        // 请求话题列表接口
+        let topicsResponse = await api.request({
+          url: 'topics',
+          data: {
+            page: page,
+            include: 'user,category'
+          }
+        })
+        let topics = topicsResponse.data.data
+        // 如果传入参数 reset 为true，则覆盖 topics
+        this.topics = reset ? topics : this.topics.concat(topics)
+        let pagination = topicsResponse.data.meta.pagination
+
+        // 根据分页设置是否还有更多数据
+        if (pagination.current_page === pagination.total_pages) {
+          this.noMoreData = true
+        }
+        this.$apply()
+      } catch (err) {
+        wepy.showModal({
+          title: '提示',
+          content: '服务器错误，请联系管理员'
+        })
+      }
+    }
+    async onPullDownRefresh() {
+      this.page = 1
+      await this.getTopics(1, true)
+      wepy.stopPullDownRefresh()
+    }
+    async onReachBottom () {
+      // 如果没有更多内容，直接返回
+      if (this.noMoreData) {
+        return
+      }
+      this.page = this.page + 1
+      await this.getTopics(this.page)
+      this.$apply()
+    }
+    async onLoad() {
+      this.getTopics()
+    }
+  }
+</script>
