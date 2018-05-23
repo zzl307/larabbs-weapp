@@ -20,7 +20,7 @@ page{
   <view class="page">
     <view class="page__bd">
       <view class="weui-cells weui-cells_after-title">
-        <navigator class="weui-cell">
+        <navigator class="weui-cell" url="/pages/users/show?id={{ topic.user.id }}" open-type="redirect">
           <view class="weui-cell__hd avatar-wrap">
             <image class="avatar" src="{{ topic.user.avatar }}"/>
           </view>
@@ -28,6 +28,9 @@ page{
             <view>{{ topic.user.name }}</view>
             <view class="page__desc">{{ topic.user.introduction }}</view>
           </view>
+
+          <!-- 向右的箭头 -->
+          <view class="weui-cell__ft weui-cell__ft_in-access"></view>
         </navigator>
       </view>
       <view class="topic-title">
