@@ -43,6 +43,8 @@ page{
       </view>
       <view class="weui-article">
         <rich-text nodes="{{ topic.body }}" bindtap="tap"></rich-text>
+
+        <button wx:if="{{ canDelete }}" @tap="deleteTopic" class="weui-btn mini-btn" type="default" size="mini">删除</button>
       </view>
     </view>
   </view>
@@ -58,7 +60,20 @@ page{
     }
     data = {
       // 话题数据
-      topic: null
+      topic: null,
+      // 当前登录用户
+      user: null
+    }
+    // 计算的属性
+    computed = {
+      // 是否可以删除话题
+      canDelete() {
+        if (!this.topic || !this.user) {
+          return false
+        }
+        // 当前用户是话题的发布者
+        return this.user.id === this.topic.user_id
+      }
     }
     // 获取话题数据
     async getTopic(id) {
@@ -84,8 +99,62 @@ page{
         })
       }
     }
-    onLoad(options) {
-      this.getTopic(options.id)
+    async onLoad(options) {
+      await this.getTopic(options.id)
+      // 获取当前登录用户
+      this.user = await this.$parent.getCurrentUser()
+      this.$apply()
+    }
+    methods = {
+      async deleteTopic() {
+        // 删除确认
+        let res = await wepy.showModal({
+          title: '确认删除',
+          content: '您确认删除该话题吗',
+          confirmText: '删除',
+          cancelText: '取消'
+        })
+
+        // 用户点击取消后返回
+        if (!res.confirm) {
+          return
+        }
+
+        // 调用接口删除话题
+        let deleteResponse = await api.authRequest({
+          url: 'topics/' + this.topic.id,
+          method: 'DELETE'
+        })
+
+        // 删除成功，给出提示
+        if (deleteResponse.statusCode === 204) {
+          wepy.showToast({
+            title: '删除成功',
+            icon: 'success'
+          })
+
+          // 设置全局变量，控制列表刷新
+          let pages = this.getCurrentPages()
+          // 如果有上一页
+          if (pages.length > 1) {
+            // 检查所有已经打开的页面，如果是话题列表页面就记录下来
+            let refreshPages = []
+            pages.forEach((page) => {
+              // 已打开的页面中包换 话题列表 或 用户的话题列表
+              if (page.route === 'pages/topics/index' || page.route === 'pages/topics/userIndex') {
+                refreshPages.push(page.route)
+              }
+            })
+            this.$parent.globalData.refreshPages = this.$parent.globalData.refreshPages.concat(refreshPages)
+            this.$apply()
+          }
+
+          // 2 秒后返回上一页
+          setTimeout(function() {
+            wepy.navigateBack()
+          }, 2000)
+        }
+      }
     }
   }
 </script>

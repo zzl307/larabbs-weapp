@@ -111,6 +111,19 @@ export default class extends wepy.app {
     this.use('promisify')
   }
 
+  globalData = {
+    refreshPages: []
+  }
+  checkRefreshPages (route, callback) {
+    let refreshIndex = this.globalData.refreshPages.indexOf(route)
+    if (refreshIndex === -1) {
+      return
+    }
+
+    this.globalData.refreshPages.splice(refreshIndex, 1)
+    callback && callback()
+  }
+
   onLaunch() {
     wepy.login().then(res => {
       console.log('login: ', res)

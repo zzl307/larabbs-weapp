@@ -131,6 +131,11 @@
       // 调用组件的 reload 方法
       this.$invoke('topiclist', 'reload')
     }
+    onShow() {
+      this.$parent.checkRefreshPages(this.getCurrentPages().pop().route, () => {
+        this.$invoke('topiclist', 'reload')
+      })
+    }
     async onPullDownRefresh() {
       // 调用组件的 reload 方法
       await this.$invoke('topiclist', 'reload')
