@@ -1,0 +1,88 @@
+<style lang="less">
+page{
+    background-color: #FFFFFF;
+}
+.avatar-wrap {
+  position: relative;
+  margin-right: 10px;
+}
+.avatar {
+  width: 50px;
+  height: 50px;
+  display: block;
+  border-radius: 50%;
+}
+.topic-title {
+  padding: 15px;
+}
+</style>
+<template>
+  <view class="page">
+    <view class="page__bd">
+      <view class="weui-cells weui-cells_after-title">
+        <navigator class="weui-cell">
+          <view class="weui-cell__hd avatar-wrap">
+            <image class="avatar" src="{{ topic.user.avatar }}"/>
+          </view>
+          <view class="weui-cell__bd">
+            <view>{{ topic.user.name }}</view>
+            <view class="page__desc">{{ topic.user.introduction }}</view>
+          </view>
+        </navigator>
+      </view>
+      <view class="topic-title">
+        <view class="page__title">{{ topic.title }}</view>
+        <view class="weui-media-box__info topic-info">
+          <view class="weui-media-box__info__meta">{{ topic.category.name }} • </view>
+          <view class="weui-media-box__info__meta">{{ topic.updated_at_diff }} • </view>
+          <view class="weui-media-box__info__meta">{{ topic.reply_count }} 次阅读</view>
+        </view>
+      </view>
+      <view class="weui-article">
+        <rich-text nodes="{{ topic.body }}" bindtap="tap"></rich-text>
+      </view>
+    </view>
+  </view>
+</template>
+<script>
+  import wepy from 'wepy'
+  import api from '@/utils/api'
+  import util from '@/utils/util'
+
+  export default class TopicShow extends wepy.page {
+    config = {
+      navigationBarTitleText: '话题详情'
+    }
+    data = {
+      // 话题数据
+      topic: null
+    }
+    // 获取话题数据
+    async getTopic(id) {
+      try {
+        let topicResponse = await api.request({
+          url: 'topics/' + id,
+          data: {
+            include: 'user,category'
+          }
+        })
+        let topic = topicResponse.data
+
+        // 格式化 updated_at
+        topic.updated_at_diff = util.diffForHumans(topic.updated_at)
+
+        this.topic = topic
+        this.$apply()
+      } catch (err) {
+        console.log(err)
+        wepy.showModal({
+          title: '提示',
+          content: '服务器错误，请联系管理员'
+        })
+      }
+    }
+    onLoad(options) {
+      this.getTopic(options.id)
+    }
+  }
+</script>
