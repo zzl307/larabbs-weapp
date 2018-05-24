@@ -109,8 +109,8 @@ page{
         if (!this.topic || !this.user) {
           return false
         }
-        // 当前用户是话题的发布者
-        return this.user.id === this.topic.user_id
+        // 当前用户是话题的发布者 或 有管理内容权限
+        return (this.user.id === this.topic.user_id) || this.$parent.can('manage_contents')
       }
     }
     // 获取话题数据
