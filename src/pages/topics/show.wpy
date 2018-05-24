@@ -46,6 +46,33 @@ page{
 
         <button wx:if="{{ canDelete }}" @tap="deleteTopic" class="weui-btn mini-btn" type="default" size="mini">删除</button>
       </view>
+
+      <!-- 话题回复 -->
+      <view class="weui-panel weui-panel_access" wx:if="{{ topic.reply_count }}">
+        <view class="weui-panel__hd">回复 ({{ topic.reply_count }})</view>
+        <view class="weui-panel__bd">
+          <repeat for="{{ topic.topReplies.data }}" wx:key="id" index="index" item="reply">
+            <view class="weui-media-box weui-media-box_appmsg" hover-class="weui-cell_active">
+              <navigator class="weui-media-box__hd weui-media-box__hd_in-appmsg" url="/pages/users/show?id={{ reply.user.id }}">
+                <image class="replyer-avatar weui-media-box__thumb" src="{{ reply.user.avatar }}" />
+              </navigator>
+              <view class="weui-media-box__bd weui-media-box__bd_in-appmsg">
+                <view class="weui-media-box__title">{{ reply.user.name }}</view>
+                <view class="weui-media-box__desc"><rich-text nodes="{{ reply.content }}" bindtap="tap"></rich-text></view>
+                <view class="weui-media-box__info">
+                  <view class="weui-media-box__info__meta">{{ reply.created_at_diff }}</view>
+                </view>
+              </view>
+            </view>
+          </repeat>
+        </view>
+        <view class="weui-panel__ft">
+          <navigator class="weui-cell weui-cell_access weui-cell_link" url="/pages/replies/index?topic_id={{ topic.id }}">
+            <view class="weui-cell__bd">查看全部回复</view>
+            <view class="weui-cell__ft weui-cell__ft_in-access"></view>
+          </navigator>
+        </view>
+      </view>
     </view>
   </view>
 </template>
@@ -81,16 +108,30 @@ page{
         let topicResponse = await api.request({
           url: 'topics/' + id,
           data: {
-            include: 'user,category'
+            include: 'user,category,topReplies.user'
           }
         })
-        let topic = topicResponse.data
+        if (topicResponse.statusCode === 200) {
+          let topic = topicResponse.data
 
-        // 格式化 updated_at
-        topic.updated_at_diff = util.diffForHumans(topic.updated_at)
+          // 格式化 updated_at
+          topic.updated_at_diff = util.diffForHumans(topic.updated_at)
 
-        this.topic = topic
-        this.$apply()
+          // 处理回复数据的发布时间
+          topic.topReplies.data.forEach(function (reply) {
+            reply.created_at_diff = util.diffForHumans(reply.created_at)
+          })
+
+          this.topic = topic
+          this.$apply()
+        }
+
+        if (topicResponse.statusCode === 404) {
+          this.$parent.global.topicRefresh = true
+          wepy.navigateBack()
+        }
+
+        return topicResponse
       } catch (err) {
         console.log(err)
         wepy.showModal({
