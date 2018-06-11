@@ -45,7 +45,7 @@ module.exports = {
       filter: /\.js$/,
       config: {
         find: /__BASE_URL__/g,
-        replace: prod ? "'https://weapp.larabbs-api/api'" : "'http://larabbs-api.test/api'"
+        replace: prod ? "'https://www.taonilove.com/api'" : "'http://larabbs-api.test/api'"
       }
     }
   },
@@ -81,7 +81,7 @@ if (prod) {
       filter: /\.js$/,
       config: {
         find: /__BASE_URL__/g,
-        replace: prod ? "'https://weapp.larabbs-api/api'" : "'http://larabbs-api.test/api'"
+        replace: prod ? "'https://www.taonilove.com/api'" : "'http://larabbs-api.test/api'"
       }
     }
   }
