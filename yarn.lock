@@ -3866,9 +3866,9 @@ wepy-redux@^1.5.3:
   dependencies:
     redux "^2.0.0 || ^3.0.0"
 
-wepy@^1.6.0:
-  version "1.7.1"
-  resolved "http://registry.npm.taobao.org/wepy/download/wepy-1.7.1.tgz#2b0870ef35eadcb515815fc49a1889566c7240b7"
+wepy@^1.7.2:
+  version "1.7.2"
+  resolved "http://registry.npm.taobao.org/wepy/download/wepy-1.7.2.tgz#679052401f2b1f4818644bc44f88b72975491a64"
 
 which@^1.2.9:
   version "1.3.0"
